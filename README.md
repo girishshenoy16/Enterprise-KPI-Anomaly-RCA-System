@@ -238,6 +238,21 @@ Enterprise-KPI-Anomaly-RCA-System/
 │   └── reports_bundle.zip
 │
 ├── screenshots/
+│   ├── actions_tab.png
+│   ├── anomaly_detection.png
+│   ├── anomaly_replay.png
+│   ├── automl_comparision.png
+│   ├── change_points.png
+│   ├── cohort_trends.png
+│   ├── date_comparision.png
+│   ├── forecasting.png
+│   ├── hero_dashboard.png
+│   ├── kpi_overview.png
+│   ├── ml_based_rca.png
+│   ├── model_training.png
+│   ├── rca_screen.png
+│   ├── reports_center.png
+│   └── what_if_simulator.png
 │
 ├── tests/
 │   ├── conftest.py
