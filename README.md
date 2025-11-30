@@ -171,17 +171,29 @@ It includes:
 # 🧭 **Dashboard Overview (13 Tabs)**
 
 1️⃣ **📈 KPI Overview**
+
 2️⃣ **🚨 Anomaly Detection & Severity**
+
 3️⃣ **🧠 Root-Cause Analysis**
+
 4️⃣ **📑 Reports Center (PDF + MD + ZIP + Preview)**
+
 5️⃣ **🌳 ML-Based RCA (Decision Tree)**
+
 6️⃣ **🔀 Change Points & Correlation**
+
 7️⃣ **📅 KPI Forecasting**
+
 8️⃣ **👥 Cohort Trends**
+
 9️⃣ **🆚 Date Comparison**
+
 🔟 **🤔 What-If Simulator**
+
 1️⃣1️⃣ **🤖 Model Comparison (AutoML Style)**
+
 1️⃣2️⃣ **🎞 Anomaly Replay**
+
 1️⃣3️⃣ **✅ Actions + PDF Generator**
 
 ---
