@@ -1,0 +1,28 @@
+# Core
+pandas
+numpy
+
+# Machine Learning
+scikit-learn
+
+# Time-series forecasting
+prophet
+
+# Visualization
+plotly
+streamlit
+
+# Change point detection
+ruptures
+
+# PDF generation (wkhtmltopdf backend)
+pdfkit
+markdown
+
+# Note: You must mannually install wkhtmltopdf on the system
+
+# Legacy PDF (if needed by dashboard actions tab)
+fpdf
+
+# Testing
+pytest

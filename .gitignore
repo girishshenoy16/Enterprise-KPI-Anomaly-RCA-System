@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+.pytest_cache
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Data & models
+data/anomalies/
+models/
+*.log
+
+# Streamlit
+.streamlit/
