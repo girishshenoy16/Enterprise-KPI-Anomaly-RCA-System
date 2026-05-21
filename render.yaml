@@ -1,9 +1,0 @@
-services:
-  - type: web
-    name: enterprise-kpi-anomaly-rca
-    env: python
-    plan: free
-    buildCommand: |
-      pip install -r requirements.txt
-    startCommand: |
-      streamlit run app/dashboard.py --server.port $PORT --server.address 0.0.0.0
