@@ -18,10 +18,6 @@
 ![Reporting](https://img.shields.io/badge/Reporting-pdfkit-yellow?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen?style=for-the-badge)
 
-<br/><br/>
-
-[![Live Demo](https://img.shields.io/badge/Live_Demo-Streamlit-success?style=for-the-badge)](YOUR_DEPLOYMENT_LINK)
-
 </div>
 
 ---
