@@ -112,9 +112,18 @@ def generate_synthetic_kpi_data(
 
         for ad in first_half:
             mask = df["date"] == ad
-            df.loc[mask, "sessions"] *= 0.6
-            df.loc[mask, "orders"] *= 0.5
-            df.loc[mask, "successful_payments"] *= 0.5
+            df.loc[mask, "sessions"] = (
+                    df.loc[mask, "sessions"] * 0.6
+            ).astype(int)
+
+            df.loc[mask, "orders"] = (
+                    df.loc[mask, "orders"] * 0.5
+            ).astype(int)
+
+            df.loc[mask, "successful_payments"] = (
+                df.loc[mask, "successful_payments"] * 0.5
+            ).astype(int)
+
             df.loc[mask, "revenue"] *= 0.5
             df.loc[mask, "conversion_rate"] *= 0.7
             df.loc[mask, "is_injected_anomaly"] = 1
@@ -123,7 +132,11 @@ def generate_synthetic_kpi_data(
         for ad in second_half:
             mask = df["date"] == ad
             df.loc[mask, "payment_success_rate"] *= 0.8
-            df.loc[mask, "successful_payments"] *= 0.7
+
+            df.loc[mask, "successful_payments"] = (
+                    df.loc[mask, "successful_payments"] * 0.7
+            ).astype(int)
+
             df.loc[mask, "revenue"] *= 0.75
             df.loc[mask, "is_injected_anomaly"] = 1
 

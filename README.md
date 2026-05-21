@@ -1,204 +1,262 @@
-# 🌟 **KPI Anomaly Detection & Automated Root-Cause Analysis (RCA) System**
+# 🌟 Enterprise KPI Anomaly Detection & Root-Cause Analysis System
 
-### *Enterprise Analytics Platform — Streamlit • Prophet • Isolation Forest • Automated Reporting Engine (V4)*
+### Enterprise Analytics Platform • Streamlit • Prophet • Isolation Forest • Automated Reporting Engine
 
+### End-to-End KPI Intelligence System with Anomaly Detection, RCA & Reporting
 ---
 
 <div align="center">
-  <img src="screenshots/hero_dashboard.png" width="850">
-  <br>
-  <i>End-to-End KPI Intelligence System with Anomaly Detection, RCA & Reporting</i>
+
+<img src="screenshots/hero_dashboard.png" width="100%"/>
+
+<br/><br/>
+
+![Python](https://img.shields.io/badge/Python-3.10-blue?style=for-the-badge)
+![Framework](https://img.shields.io/badge/Framework-Streamlit-red?style=for-the-badge)
+![Forecasting](https://img.shields.io/badge/Forecasting-Prophet-orange?style=for-the-badge)
+![Model](https://img.shields.io/badge/Model-IsolationForest-green?style=for-the-badge)
+![Reporting](https://img.shields.io/badge/Reporting-pdfkit-yellow?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-Production_Ready-brightgreen?style=for-the-badge)
+
+<br/><br/>
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Streamlit-success?style=for-the-badge)](YOUR_DEPLOYMENT_LINK)
+
 </div>
 
 ---
 
-# 🖼️ **Project Overview**
+# 🖼️ Project Overview
 
-This repository contains a **Google-grade enterprise analytics system** that monitors business KPIs, detects anomalies, performs automated root-cause analysis, and generates full **executive-ready MD + PDF reports**.
+An enterprise-grade KPI intelligence platform designed to monitor business metrics, detect anomalies, 
+perform automated root-cause analysis (RCA), generate executive-ready reports, and support proactive 
+business decision-making.
 
-Built exactly like dashboards used at:
+The platform combines:
+- Hybrid anomaly detection
+- KPI forecasting
+- Automated RCA
+- Executive dashboarding
+- AutoML model comparison
+- What-if business simulation
+- PDF & Markdown reporting workflows
 
-**Google • Uber • Amazon • Swiggy • Flipkart • Meesho • Meta • Netflix**
-
-It includes:
-
-* 🔮 **Hybrid anomaly detection (Prophet + IsolationForest + Z-Score)**
-* 🧠 **RCA engine (channel / region / cohort contributions)**
-* 📑 **Full reporting engine (MD, PDF, ZIP)**
-* 📉 **Change-point detection**
-* 📅 **Forecasting (7–60 days)**
-* 🎞 **Anomaly replay**
-* 🤖 **AutoML model comparison**
-* 🎛 **What-if simulator**
-* 🌳 **ML-based RCA (Decision Tree)**
-* 🧭 **13-tab enterprise Streamlit interface**
-
----
-
-# 🏷️ **Badges**
-
-![Python](https://img.shields.io/badge/Python-3.10-blue)
-![Streamlit](https://img.shields.io/badge/Framework-Streamlit-red)
-![Prophet](https://img.shields.io/badge/Forecasting-Prophet-orange)
-![IsolationForest](https://img.shields.io/badge/Model-IsolationForest-green)
-![pdfkit](https://img.shields.io/badge/Reporting-pdfkit-yellow)
-![Status](https://img.shields.io/badge/Status-Production--Ready-brightgreen)
-
+Built with a modular analytics architecture using:
+- Streamlit
+- Prophet
+- Isolation Forest
+- Decision Trees
+- Automated reporting pipelines
 
 ---
 
-## ⭐ 1. **KPI Overview Dashboard**
+# 🚀 Key Business Capabilities
+
+- Real-time KPI monitoring
+- Hybrid anomaly detection
+- Automated root-cause analysis
+- Executive-ready reporting engine
+- Forecasting & trend intelligence
+- What-if business simulation
+- AutoML model comparison
+- Change-point detection
+- Cohort & regional intelligence
+- Interactive enterprise dashboard workflows
+
+---
+
+# 📈 Business Impact
+
+This system helps organizations:
+
+- Detect KPI anomalies proactively
+- Reduce manual RCA investigation time
+- Improve executive decision-making
+- Forecast KPI trends & operational shifts
+- Monitor business health in real-time
+- Automate reporting workflows
+- Improve operational visibility
+- Enable analytics-driven strategic planning
+
+---
+
+# 🧭 13-Tab Enterprise Dashboard
+
+| Module                    | Function                              |
+|---------------------------|---------------------------------------|
+| 📈 KPI Overview           | Business KPI monitoring               |
+| 🚨 Anomaly Detection      | Outlier & severity identification     |
+| 🧠 Root-Cause Analysis    | Channel / region / cohort diagnostics |
+| 📑 Reports Center         | PDF + MD + ZIP report generation      |
+| 🌳 ML-Based RCA           | Decision-tree-based RCA engine        |
+| 🔀 Change Point Detection | Trend shift analysis                  |
+| 📅 Forecasting            | Prophet-based KPI forecasting         |
+| 👥 Cohort Trends          | Cohort & segment analysis             |
+| 🆚 Date Comparison        | Period-over-period comparison         |
+| 🤔 What-If Simulator      | KPI impact simulation                 |
+| 🤖 AutoML Comparison      | Model performance benchmarking        |
+| 🎞 Anomaly Replay         | Historical anomaly playback           |
+| ✅ Actions & Exports       | PDF generation & action workflows     |
+
+---
+
+# 📸 Platform Screenshots
+
+## ⭐ **KPI Overview Dashboard**
 
 <div align="center">
-  <img src="screenshots/kpi_overview.png" width="850">
+  <img src="screenshots/kpi_overview.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 2. **Anomaly Detection & Severity Levels**
+## ⭐ **Anomaly Detection & Severity Analysis**
 
 <div align="center">
-  <img src="screenshots/anomaly_detection.png" width="850">
+  <img src="screenshots/anomaly_detection.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 3. **Root-Cause Analysis (RCA)**
+## ⭐ **Root-Cause Analysis (RCA) Engine**
 
 <div align="center">
-  <img src="screenshots/rca_screen.png" width="850">
+  <img src="screenshots/rca_screen.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 4. **Reports Center (MD + PDF + ZIP)**
+## ⭐ **KPI Forecasting System**
 
 <div align="center">
-  <img src="screenshots/reports_center.png" width="850">
+  <img src="screenshots/forecasting.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 5. **ML-Based RCA (Decision Tree)**
+# 📸 Additional Dashboard Screenshots
+
+<details>
+
+<summary>View Additional Dashboard Screens</summary>
+
+<br/>
+
+## ⭐ **Reports Center**
 
 <div align="center">
-  <img src="screenshots/ml_based_rca.png" width="850">
+  <img src="screenshots/reports_center.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 6. **Change Point Detection & Correlation Matrix**
+## ⭐ **ML-Based RCA (Decision Tree)**
+
+<div align="center">
+  <img src="screenshots/ml_based_rca.png" width="100%">
+</div>
+
+---
+
+## ⭐ **Change Point Detection & Correlation Matrix**
 
 <table>
-<tr>
-<td><img src="screenshots/change_points.png" width="420"></td>
-<td><img src="screenshots/correlation_matrix.png" width="420"></td>
-</tr>
+    <tr>
+        <td><img src="screenshots/change_points.png" width="420"></td>
+        <td><img src="screenshots/correlation_matrix.png" width="420"></td>
+    </tr>
 </table>
 
 ---
 
-## ⭐ 7. **KPI Forecasting (Prophet)**
+## ⭐ **Cohort / Channel / Region Trends**
 
 <div align="center">
-  <img src="screenshots/forecasting.png" width="850">
+  <img src="screenshots/cohort_trends.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 8. **Cohort / Channel / Region Trends**
+## ⭐ **Date Comparison Engine**
 
 <div align="center">
-  <img src="screenshots/cohort_trends.png" width="850">
+  <img src="screenshots/date_comparison.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 9. **Date Comparison Engine**
+## ⭐ **What-If Simulator**
 
 <div align="center">
-  <img src="screenshots/date_comparison.png" width="850">
+  <img src="screenshots/what_if_simulator.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 10. **What-If Simulator**
+## ⭐ **AutoML Model Comparison**
 
 <div align="center">
-  <img src="screenshots/what_if_simulator.png" width="850">
+  <img src="screenshots/automl_comparison.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 11. **AutoML Model Comparison**
+## ⭐ **Anomaly Replay Timeline**
 
 <div align="center">
-  <img src="screenshots/automl_comparison.png" width="850">
+  <img src="screenshots/anomaly_replay.png" width="100%">
 </div>
 
 ---
 
-## ⭐ 12. **Anomaly Replay Timeline**
+## ⭐ **Actions + PDF Export**
 
 <div align="center">
-  <img src="screenshots/anomaly_replay.png" width="850">
+  <img src="screenshots/actions_pdf.png" width="100%">
 </div>
 
----
-
-## ⭐ 13. **Actions + PDF Export**
-
-<div align="center">
-  <img src="screenshots/actions_pdf.png" width="850">
-</div>
+</details>
 
 ---
 
 # 🧬 **System Architecture**
 
-```
- Raw KPIs → Preprocessing → Hybrid Anomaly Engine
-              ↓                 ↓
-     RCA Engine (channel/region/cohort)
-              ↓
-   Streamlit 12–Tab Dashboard
-              ↓
-      Reporting Engine (MD + PDF + ZIP)
+```text
+Raw KPI Data
+      ↓
+Preprocessing Pipeline
+      ↓
+Hybrid Anomaly Detection Engine
+(Prophet + Isolation Forest + Z-Score)
+      ↓
+Root-Cause Analysis Engine
+(Channel / Region / Cohort Analysis)
+      ↓
+Forecasting & Simulation Modules
+      ↓
+13-Tab Enterprise Streamlit Dashboard
+      ↓
+Automated Reporting Engine
+(MD + PDF + ZIP)
 ```
 
 ---
 
-# 🧭 **Dashboard Overview (13 Tabs)**
+# ⚙️ Tech Stack
 
-1️⃣ **📈 KPI Overview**
-
-2️⃣ **🚨 Anomaly Detection & Severity**
-
-3️⃣ **🧠 Root-Cause Analysis**
-
-4️⃣ **📑 Reports Center (PDF + MD + ZIP + Preview)**
-
-5️⃣ **🌳 ML-Based RCA (Decision Tree)**
-
-6️⃣ **🔀 Change Points & Correlation**
-
-7️⃣ **📅 KPI Forecasting**
-
-8️⃣ **👥 Cohort Trends**
-
-9️⃣ **🆚 Date Comparison**
-
-🔟 **🤔 What-If Simulator**
-
-1️⃣1️⃣ **🤖 Model Comparison (AutoML Style)**
-
-1️⃣2️⃣ **🎞 Anomaly Replay**
-
-1️⃣3️⃣ **✅ Actions + PDF Generator**
+| Category        | Technologies                    |
+| --------------- | ------------------------------- |
+| Frontend        | Streamlit                       |
+| Forecasting     | Prophet                         |
+| ML Models       | Isolation Forest, Decision Tree |
+| Visualization   | Plotly, Matplotlib              |
+| Reporting       | pdfkit                          |
+| Data Processing | Pandas, NumPy                   |
+| Testing         | Pytest                          |
 
 ---
 
-# 📁 **Folder Structure**
+# 📁 **Project Structure**
 
 ```
 Enterprise-KPI-Anomaly-RCA-System/
@@ -268,13 +326,14 @@ Enterprise-KPI-Anomaly-RCA-System/
 
 # ⚙️ **Installation**
 
-
 ### 1️⃣ Clone
 
 ```bash
 git clone https://github.com/girishshenoy16/Enterprise-KPI-Anomaly-RCA-System
 cd Enterprise-KPI-Anomaly-RCA-System
 ```
+
+---
 
 ## 2️⃣ Create Virtual Environment
 
@@ -283,12 +342,97 @@ python -m venv venv
 venv\Scripts\activate
 ```
 
+---
+
 ## 3️⃣ Install Dependencies
 
 ```bash
 python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+---
+
+Add this section to your `README.md` under **Installation** or before **Run Application**.
+
+---
+
+# 🧾 PDF Report Generation Setup (wkhtmltopdf Required)
+
+This project uses **pdfkit + wkhtmltopdf** to generate executive-ready PDF reports from Markdown files.
+
+⚠️ To enable the **Reports Center** and PDF export functionality, you must install the **wkhtmltopdf** tool locally.
+
+---
+
+## ✅ Step 1 — Download wkhtmltopdf
+
+Download from the official website:
+
+[wkhtmltopdf Official Download Page](https://wkhtmltopdf.org/downloads.html?utm_source=chatgpt.com)
+
+Install it normally on your system.
+
+---
+
+## ✅ Step 2 — Verify Installation
+
+After installation, verify using:
+
+```bash
+wkhtmltopdf --version
+```
+
+Expected output:
+
+```bash
+wkhtmltopdf 0.12.x
+```
+
+---
+
+## ✅ Step 3 — Configure Path (Windows)
+
+If PDF generation does not work automatically, set the environment variable:
+
+```powershell
+setx WKHTMLTOPDF_CMD "C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+```
+
+Restart your terminal/VS Code after setting it.
+
+---
+
+## ✅ Why This Tool Is Needed
+
+The Reports Center converts:
+
+```text
+Markdown (.md) → PDF (.pdf)
+```
+
+using:
+
+* `pdfkit`
+* `wkhtmltopdf`
+
+This enables:
+
+✔ Executive-ready reports
+✔ PDF preview inside Streamlit
+✔ ZIP report bundle generation
+✔ Downloadable business summaries
+
+---
+
+## 🚀 Features Enabled After Installation
+
+* 📑 Executive Summary PDF
+* 📊 Business Overview Report
+* 🧠 RCA Report
+* 👥 Persona Insights Report
+* 📦 ZIP Report Bundle
+* 👀 Inline PDF Preview in Streamlit
 
 ---
 
@@ -304,74 +448,72 @@ streamlit run app/dashboard.py
 
 ---
 
-# 🧰 **Inside Streamlit — Your Entire Workflow**
+# 🧰 **Inside Streamlit — Your End-to-End Workflow**
 
-### ✔ **1. Generate Synthetic Data**
+### ✔ **Step 1 — Generate Synthetic KPI Data**
 
-Inside the **Sidebar**, click:
+Inside the sidebar, click:
 
 **➡️ “Generate Synthetic KPI Data”**
 
-> ## **After Doing This Step, Reload The Page**
+This automatically:
 
-* Creates raw + processed data
-* Automatically refreshes KPI files
+* Creates raw & processed data
+* Refreshes KPI datasets
+* Prepares dashboard pipelines
 * No manual CSV handling needed
-
-> ## **Refer to the image below as reference**
-
-
-<div align="center">
-  <img src="screenshots/hero_dashboard.png" width="850">
-  <br>
-</div>
-
 
 ---
 
-### ✔ **2. Train / Refresh Anomaly Model**
+> ## After Doing This Step, Reload The Page
 
-Still in the sidebar, click:
+---
+
+### ✔ **Step 2 — Train / Refresh Anomaly Model**
+
+Inside the sidebar, click:
 
 **➡️ “Train / Refresh Anomaly Model”**
 
+This:
+
 * Trains Isolation Forest
 * Saves model to `/models/isolation_forest.pkl`
+* Refreshes anomaly pipelines
+* Updates model artifacts
 * Ensures anomaly engine works instantly
 
-> ## **Refer to the image below as reference**
 
+> ## Refer to the image below as reference
 
 <div align="center">
-  <img src="screenshots/model_training.png" width="850">
+  <img src="screenshots/model_training.png" width="100%">
   <br>
 </div>
 
-
 ---
 
-### ✔ **3. Explore the Dashboard (All 13 Tabs)**
+### ✔ **Step 3 — Explore Enterprise Dashboard**
 
-You can now explore:
+You can now interact with the complete 13-tab enterprise analytics platform featuring:
 
-* KPI Overview
-* Anomaly Detection
-* Severity Ladder
-* Change Points
-* RCA
-* Forecasting
-* Cohorts
-* AutoML comparison
-* What-if simulation
-* Anomaly Replay
-* Date Comparison
-* PDF / Actions
-
+* KPI Monitoring & Overview
+* Hybrid Anomaly Detection
+* Severity Analysis & Change Points
+* Root-Cause Analysis (RCA)
+* Forecasting & Trend Intelligence
+* Cohort / Region / Channel Analytics
+* What-If Business Simulation
+* AutoML Model Comparison
+* Anomaly Replay Timeline
+* Date Comparison Engine
+* Executive Reporting & PDF Exports
+* 
 ---
 
-### ✔ **4. Generate All Reports (Markdown + PDF + ZIP)**
+### ✔ **Step 4 — Generate Executive Reports**
 
-In the **Reports Center** tab:
+Inside Reports Center tab:
 
 Click:
 
@@ -380,39 +522,89 @@ Click:
 Streamlit automatically:
 
 * Creates Markdown reports
-* Converts them into PDFs via **wkhtmltopdf**
+* Converts them into PDF Reports via **wkhtmltopdf**
 * Bundles them into a ZIP
-* Shows **inline PDF preview**
-* Offers **Download PDF** + **Download ZIP**
+* Shows **inline PDF previews**
+* Offers **Downloadable Exports**
 
 No command-line steps required. Zero manual preprocessing.
 
 ---
 
-# 🧩 Final Workflow Summary (Exactly What Recruiters Love)
+# 🧩 End-to-End Workflow Summary 
 
 | Step | Where       | Action                      |
-| ---- | ----------- | --------------------------- |
+|------|-------------|-----------------------------|
 | 1    | Sidebar     | Generate Synthetic Data     |
 | 2    | Sidebar     | Train/Refresh Anomaly Model |
 | 3    | Main UI     | Explore 13 Feature Tabs     |
 | 4    | Reports Tab | Generate MD + PDF + ZIP     |
 | 5    | Reports Tab | Preview & Download Reports  |
 
-
 ---
 
 # 🧪 **Testing**
 
 ```bash
+pytest
+pytest -v
 pytest -q
 ```
 
 ---
 
-# 🧠 **Future Work**
+# ⚠️ Common Issues & Fixes
+
+## sklearn Version Warning During Testing
+
+If you see warnings like:
+
+```text
+InconsistentVersionWarning
+Trying to unpickle estimator IsolationForest...
+```
+
+it means the saved anomaly model was trained using a different version of `scikit-learn`.
+
+### ✅ Fix
+
+Retrain the anomaly model using:
+
+```bash
+python -m app.train_models
+```
+
+or click:
+
+```text
+Train / Refresh Anomaly Model
+```
+
+inside the Streamlit sidebar.
+
+This regenerates the model using your current environment versions.
+
+---
+
+# 🔮 **Future Improvements**
 
 * Slack/Teams alerting
 * Real-time stream ingestion
-* LSTM/Transformer anomaly models
-* Causal inference
+* LSTM/Transformer-based anomaly models
+* Causal inference workflows
+* Role-based authentication
+* Cloud-native deployment architecture
+
+# 🤝 Contribution
+
+Contributions, suggestions, and improvements are welcome.
+
+If you found this project valuable, consider starring the repository.
+
+---
+
+<div align="center">
+
+### ⚡ Enterprise KPI Intelligence for Proactive Decision-Making
+
+</div>

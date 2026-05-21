@@ -1,6 +1,8 @@
+# =========================
 # Python
+# =========================
 __pycache__/
-.pytest_cache
+.pytest_cache/
 *.py[cod]
 *.pyo
 *.pyd
@@ -8,20 +10,56 @@ __pycache__/
 dist/
 build/
 
+# =========================
 # Virtual environments
+# =========================
 .venv/
 venv/
 env/
 
-# IDEs
+# =========================
+# IDEs / Editors
+# =========================
 .vscode/
 .idea/
 *.iml
 
-# Data & models
-data/anomalies/
-models/
-*.log
-
+# =========================
 # Streamlit
+# =========================
 .streamlit/
+
+# =========================
+# Data Outputs
+# =========================
+data/raw/
+data/anomalies/
+
+# Optional:
+# Keep small processed sample data for GitHub demo
+# Ignore only large/generated processed files if needed
+# data/processed/
+
+# =========================
+# Trained Models
+# =========================
+models/
+
+# =========================
+# Outputs
+# =========================
+outputs/
+
+# =========================
+# Generated Reports (PDF/ZIP)
+# Keep Markdown reports tracked
+# =========================
+reports/*.pdf
+reports/*.zip
+reports/*.html
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db

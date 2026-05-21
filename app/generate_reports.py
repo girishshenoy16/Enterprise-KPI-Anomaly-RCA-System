@@ -8,49 +8,90 @@ from app.config import (
     KPI_COLUMNS,
     RAW_DATA_FILE,
     AGG_DAILY_FILE,
+    REPORTS_DIR,
 )
 
-from app.anomaly_engine import build_hybrid_anomalies, load_daily_data
-from app.rca_engine import compute_segment_contributions, load_raw_events
+from app.anomaly_engine import (
+    build_hybrid_anomalies,
+    load_daily_data,
+)
+
+from app.rca_engine import (
+    compute_segment_contributions,
+    load_raw_events,
+)
+
 from app.pdf_generator import markdown_to_pdf
 
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-REPORTS_DIR = BASE_DIR / "reports"
-BUNDLE_DIR = REPORTS_DIR 
+# =========================
+# Directories
+# =========================
+
+BUNDLE_DIR = REPORTS_DIR
 
 REPORTS_DIR.mkdir(parents=True, exist_ok=True)
 BUNDLE_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def _kpi_overview_section(df_daily: pd.DataFrame) -> str:
-    lines = ["# KPI Overview\n"]
-    lines.append("This section summarizes the overall health of key KPIs.\n")
+# =========================
+# KPI Overview Section
+# =========================
 
-    stats = df_daily[KPI_COLUMNS].describe().T.reset_index()
+def _kpi_overview_section(df_daily: pd.DataFrame) -> str:
+
+    lines = ["# KPI Overview\n"]
+
+    lines.append(
+        "This section summarizes the overall health of key KPIs.\n"
+    )
+
+    stats = (
+        df_daily[KPI_COLUMNS]
+        .describe()
+        .T
+        .reset_index()
+    )
+
     stats.rename(columns={"index": "kpi"}, inplace=True)
 
     lines.append("| KPI | Mean | Min | Max | Std |")
     lines.append("| --- | ---- | --- | --- | --- |")
 
     for _, row in stats.iterrows():
+
         lines.append(
-            f"| {row['kpi']} | {row['mean']:.2f} | "
-            f"{row['min']:.2f} | {row['max']:.2f} | {row['std']:.2f} |"
+            f"| {row['kpi']} | "
+            f"{row['mean']:.2f} | "
+            f"{row['min']:.2f} | "
+            f"{row['max']:.2f} | "
+            f"{row['std']:.2f} |"
         )
 
     return "\n".join(lines)
 
 
-def _anomaly_summary_section(df_anom: pd.DataFrame) -> str:
+# =========================
+# Anomaly Summary Section
+# =========================
+
+def _anomaly_summary_section(
+        df_anom: pd.DataFrame
+) -> str:
+
     lines = ["# Anomaly Summary\n"]
 
     lines.append(
-        "This section highlights the most severe anomalies detected by the hybrid engine.\n"
+        "This section highlights the most severe anomalies "
+        "detected by the hybrid engine.\n"
     )
 
     top = (
-        df_anom.sort_values("hybrid_anomaly_score", ascending=False)
+        df_anom
+        .sort_values(
+            "hybrid_anomaly_score",
+            ascending=False
+        )
         .head(10)
         .copy()
     )
@@ -59,65 +100,94 @@ def _anomaly_summary_section(df_anom: pd.DataFrame) -> str:
 
     lines.append("| Date | Score | Severity | Is Anomaly |")
     lines.append("| ---- | ------ | -------- | ---------- |")
-    
+
     for _, row in top.iterrows():
+
         lines.append(
-            f"| {row['date']} | {row['hybrid_anomaly_score']:.3f} | "
-            f"{row.get('severity','')} | {bool(row['is_hybrid_anomaly'])} |"
+            f"| {row['date']} | "
+            f"{row['hybrid_anomaly_score']:.3f} | "
+            f"{row.get('severity', '')} | "
+            f"{bool(row['is_hybrid_anomaly'])} |"
         )
-    
+
     return "\n".join(lines)
 
 
+# =========================
+# RCA Summary Section
+# =========================
+
 def _rca_summary_section(
-        raw_df: pd.DataFrame, 
+        raw_df: pd.DataFrame,
         df_anom: pd.DataFrame
 ) -> str:
 
     lines = ["# Root-Cause Summary\n"]
 
     lines.append(
-        "This section lists top segment-level contributors for the most recent anomaly.\n"
+        "This section lists top segment-level contributors "
+        "for the most recent anomaly.\n"
     )
 
-    anomalies = df_anom[df_anom["is_hybrid_anomaly"]].sort_values(
-        "date", ascending=False
+    anomalies = (
+        df_anom[df_anom["is_hybrid_anomaly"]]
+        .sort_values("date", ascending=False)
     )
 
     if anomalies.empty:
-        lines.append("_No anomalies were detected in the current window._")
+
+        lines.append(
+            "_No anomalies were detected in the current window._"
+        )
 
         return "\n".join(lines)
 
     latest = anomalies.iloc[0]
     latest_date = latest["date"]
 
-
-    lines.append(f"- Latest anomaly date: **{latest_date.date()}**\n")
-
+    lines.append(
+        f"- Latest anomaly date: "
+        f"**{latest_date.date()}**\n"
+    )
 
     for kpi in KPI_COLUMNS:
+
         if kpi not in df_anom.columns:
             continue
 
-        seg_df = compute_segment_contributions(raw_df, latest_date, kpi)
-       
+        seg_df = compute_segment_contributions(
+            raw_df,
+            latest_date,
+            kpi
+        )
+
         if seg_df.empty:
             continue
 
-        lines.append(f"## {kpi.replace('_', ' ').title()}\n")
         lines.append(
-            "| Channel | Region | Cohort | Current | Baseline | Δ | % Change | % of Total Change |"
+            f"## {kpi.replace('_', ' ').title()}\n"
         )
 
         lines.append(
-            "| ------- | ------ | ------ | ------- | -------- |---|----------|-------------------|"
+            "| Channel | Region | Cohort | "
+            "Current | Baseline | Δ | "
+            "% Change | % of Total Change |"
+        )
+
+        lines.append(
+            "| ------- | ------ | ------ | "
+            "------- | -------- |---|"
+            "----------|-------------------|"
         )
 
         for _, row in seg_df.head(5).iterrows():
+
             lines.append(
-                f"| {row['channel']} | {row['region']} | {row['cohort']} | "
-                f"{row['current_value']:.2f} | {row['baseline_value']:.2f} | "
+                f"| {row['channel']} | "
+                f"{row['region']} | "
+                f"{row['cohort']} | "
+                f"{row['current_value']:.2f} | "
+                f"{row['baseline_value']:.2f} | "
                 f"{row['abs_change']:.2f} | "
                 f"{row['pct_change']:.1f}% | "
                 f"{row['contribution_pct_of_change']:.1f}% |"
@@ -128,39 +198,54 @@ def _rca_summary_section(
     return "\n".join(lines)
 
 
+# =========================
+# Recommendations Section
+# =========================
+
 def _recommendations_section() -> str:
 
-    return """# Recommendation Summary
+    return """
+# Recommendation Summary
 
 This section consolidates key actions for Product, Growth, and Engineering teams.
 
 ## Product & UX
-- Review journeys around checkout, payment and order confirmation.
-- Prioritise fixes for segments (channel/region/cohort) that contributed the most to recent drops.
+- Review checkout and payment journeys.
+- Prioritise fixes for segments contributing most to KPI drops.
 
 ## Growth & Marketing
-- Launch win-back campaigns targeting users affected during anomaly windows.
-- Monitor performance of campaigns against KPIs like conversion rate and revenue.
+- Launch win-back campaigns for affected cohorts.
+- Monitor campaign impact against conversion and revenue.
 
 ## Engineering & Reliability
-- Add monitoring around payment failures, latency, and error rates.
-- Instrument alerts for major/critical severity anomalies in core KPIs.
+- Add monitoring for payment failures and latency.
+- Configure alerts for major KPI anomalies.
 
 ## Business Analyst Takeaways
-- Track post-action KPI movement to confirm if anomalies are resolved.
-- Document each anomaly with date, impacted KPIs, and actions taken.
+- Track KPI movement after actions are implemented.
+- Document anomalies, actions, and outcomes.
 """
 
 
+# =========================
+# Executive Summary Section
+# =========================
+
 def _executive_summary_section(
-        df_daily: pd.DataFrame, 
+        df_daily: pd.DataFrame,
         df_anom: pd.DataFrame
 ) -> str:
-    latest_date = df_daily["date"].max().date()
-    total_days = df_daily["date"].nunique()
-    anomaly_days = int(df_anom["is_hybrid_anomaly"].sum())
 
-    return f"""# Executive Summary
+    latest_date = df_daily["date"].max().date()
+
+    total_days = df_daily["date"].nunique()
+
+    anomaly_days = int(
+        df_anom["is_hybrid_anomaly"].sum()
+    )
+
+    return f"""
+# Executive Summary
 
 **Period analysed:** Last {total_days} days  
 **Data refreshed on:** {datetime.now().strftime('%Y-%m-%d %H:%M')}  
@@ -173,85 +258,137 @@ def _executive_summary_section(
 - Engine used: **Prophet + Isolation Forest (Hybrid)**
 
 Overall, the system continuously monitors revenue, orders, conversion, DAU and other
-business-critical KPIs. Any abnormal deviation from forecasted ranges is surfaced as
-an anomaly, with severity levels (Normal / Minor / Major / Critical).
+business-critical KPIs.
+
+Any abnormal deviation from forecasted ranges is surfaced as an anomaly with severity levels
+(Normal / Minor / Major / Critical).
 """
 
 
+# =========================
+# Main Report Generation
+# =========================
 def run_all_reports() -> dict:
     """
-    Generate all markdown + PDF reports and return paths.
+    Generate all markdown + PDF reports.
     """
-    REPORTS_DIR.mkdir(parents=True, exist_ok=True)
-    BUNDLE_DIR.mkdir(parents=True, exist_ok=True)
 
-    # Load data
-    df_daily = load_daily_data(AGG_DAILY_FILE)
-    df_anom = build_hybrid_anomalies(df_daily)
-    raw_df = load_raw_events(RAW_DATA_FILE)
+    # =========================
+    # Load Data
+    # =========================
 
-    # --- Markdown files ---
+    df_daily = load_daily_data(
+        AGG_DAILY_FILE
+    )
+
+    df_anom = build_hybrid_anomalies(
+        df_daily
+    )
+
+    raw_df = load_raw_events(
+        RAW_DATA_FILE
+    )
+
     files = {}
 
+    # =========================
+    # Markdown Reports
+    # =========================
     exec_md = REPORTS_DIR / "executive_summary.md"
 
     exec_md.write_text(
-        _executive_summary_section(df_daily, df_anom), encoding="utf-8"
+        _executive_summary_section(
+            df_daily,
+            df_anom
+        ),
+        encoding="utf-8"
     )
 
     files["executive_summary_md"] = exec_md
 
     kpi_md = REPORTS_DIR / "business_overview.md"
-    kpi_md.write_text(_kpi_overview_section(df_daily), encoding="utf-8")
+
+    kpi_md.write_text(
+        _kpi_overview_section(df_daily),
+        encoding="utf-8"
+    )
 
     files["business_overview_md"] = kpi_md
 
-    anomaly_md = REPORTS_DIR / "clv_summary.md"  
-    anomaly_md.write_text(_anomaly_summary_section(df_anom), encoding="utf-8")
+    anomaly_md = REPORTS_DIR / "clv_summary.md"
+
+    anomaly_md.write_text(
+        _anomaly_summary_section(df_anom),
+        encoding="utf-8"
+    )
 
     files["anomaly_summary_md"] = anomaly_md
 
     rca_md = REPORTS_DIR / "persona_insights.md"
-    rca_md.write_text(_rca_summary_section(raw_df, df_anom), encoding="utf-8")
+
+    rca_md.write_text(
+        _rca_summary_section(
+            raw_df,
+            df_anom
+        ),
+        encoding="utf-8"
+    )
 
     files["rca_summary_md"] = rca_md
 
     rec_md = REPORTS_DIR / "frm_report.md"
-    rec_md.write_text(_recommendations_section(), encoding="utf-8")
+
+    rec_md.write_text(
+        _recommendations_section(),
+        encoding="utf-8"
+    )
 
     files["recommendations_md"] = rec_md
 
-    # --- PDFs ---
-    exec_pdf = REPORTS_DIR / "executive_summary.pdf"
-    markdown_to_pdf(exec_md, exec_pdf)
+    # =========================
+    # PDF Reports
+    # =========================
 
-    files["executive_summary_pdf"] = exec_pdf
-
-    pdf_paths = [exec_pdf]
+    pdf_paths = []
 
     for key in [
-        "business_overview_md", 
-        "anomaly_summary_md", 
-        "rca_summary_md", 
-        "recommendations_md"
+        "executive_summary_md",
+        "business_overview_md",
+        "anomaly_summary_md",
+        "rca_summary_md",
+        "recommendations_md",
     ]:
         md_file = files[key]
+
         pdf_file = md_file.with_suffix(".pdf")
 
-        markdown_to_pdf(md_file, pdf_file)
+        markdown_to_pdf(
+            md_file,
+            pdf_file
+        )
+
+        # Store PDF reference
+        files[f"{md_file.stem}_pdf"] = pdf_file
+
         pdf_paths.append(pdf_file)
 
+    # =========================
+    # ZIP Bundle
+    # =========================
 
-    # --- Bundle ZIP ---
-    bundle_zip = BUNDLE_DIR / "reports_bundle.zip"
+    bundle_zip = (
+        BUNDLE_DIR / "reports_bundle.zip"
+    )
 
     with zipfile.ZipFile(
-        bundle_zip, "w", 
+        bundle_zip,
+        "w",
         zipfile.ZIP_DEFLATED
     ) as zf:
+
         for p in pdf_paths:
             zf.write(p, p.name)
-            
+
     files["bundle_zip"] = bundle_zip
 
     return files

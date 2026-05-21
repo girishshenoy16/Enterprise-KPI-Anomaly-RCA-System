@@ -21,6 +21,9 @@ markdown
 
 # Note: You must mannually install wkhtmltopdf on the system
 
+# Kaleido enables Plotly → PNG export.
+kaleido
+
 # Legacy PDF (if needed by dashboard actions tab)
 fpdf
 

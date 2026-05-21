@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
+
 from sklearn.ensemble import IsolationForest
+from app.model_registry import save_model, load_model
 from prophet import Prophet
 
 from app.config import (
@@ -66,8 +68,6 @@ def fit_prophet_for_kpi(
 
 
 def compute_isolation_forest_scores(df_daily: pd.DataFrame) -> pd.DataFrame:
-    from app.model_registry import save_model, load_model
-
     feat_df = df_daily.copy().sort_values("date")
 
     # SAFETY FEATURES: ensure columns exist (important for tests and robustness)

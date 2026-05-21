@@ -1,4 +1,3 @@
-# app/model_registry.py
 from pathlib import Path
 import joblib
 from typing import Any

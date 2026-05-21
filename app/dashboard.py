@@ -7,11 +7,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))
 
-
 import streamlit as st
 import pandas as pd
 import plotly.express as px
 import ruptures as rpt
+
+from streamlit import session_state
 from fpdf import FPDF
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import f1_score
@@ -20,8 +21,9 @@ from app.config import (
     AGG_DAILY_FILE,
     RAW_DATA_FILE,
     KPI_COLUMNS,
+    REPORTS_DIR,
+    OUTPUTS_DIR
 )
-
 
 from app.anomaly_engine import build_hybrid_anomalies, load_daily_data
 from app.rca_engine import compute_segment_contributions
@@ -31,12 +33,13 @@ from app import generate_reports
 from prophet import Prophet
 
 from app.train_models import train_isolation_forest
-from app.model_registry import load_model
+
+if "sidebar_state" not in session_state:
+    session_state.sidebar_state = "expanded"
 
 @st.cache_data
 def get_daily_data():
     return load_daily_data(AGG_DAILY_FILE)
-
 
 @st.cache_data
 def get_raw_data():
@@ -105,22 +108,29 @@ def _build_pdf_report(insight_text: str, actions_text: str) -> bytes:
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
+
+    #Title
     pdf.set_font("Arial", "B", 14)
     pdf.cell(0, 10, "KPI Anomaly & RCA Report", ln=True)
 
-    pdf.set_font("Arial", size=11)
+    # Insight Summary
+    pdf.set_font("Arial", "B", 11)
     pdf.ln(4)
     pdf.multi_cell(0, 6, "Insight Summary:")
+    pdf.set_font("Arial", size=11)
+    pdf.set_font("Arial", size=11)
     pdf.ln(2)
-    pdf.multi_cell(0, 6, insight_text)
+    pdf.multi_cell(0, 6, str(insight_text))
 
+    # Suggested Actions
     pdf.ln(4)
     pdf.set_font("Arial", "B", 11)
     pdf.multi_cell(0, 6, "Suggested Actions:")
     pdf.set_font("Arial", size=11)
     pdf.ln(2)
-    pdf.multi_cell(0, 6, actions_text)
+    pdf.multi_cell(0, 6, str(actions_text))
 
+    # Return PDF Bytes
     pdf_bytes = pdf.output(dest="S").encode("latin-1")
     return pdf_bytes
 
@@ -172,54 +182,101 @@ def _compute_model_scores(df_daily: pd.DataFrame, df_anom: pd.DataFrame, kpi: st
     return pd.DataFrame(results).sort_values("f1", ascending=False)
 
 
+def save_plotly_figure(fig, filename: str):
+    """
+    Save Plotly figures safely as PNG inside outputs folder.
+    """
+    try:
+        output_path = OUTPUTS_DIR / filename
+
+        fig.write_image(
+            str(output_path),
+            format="png",
+            width=1600,
+            height=900,
+            scale=2,
+        )
+
+    except Exception as e:
+        st.warning(
+            f"Could not save chart '{filename}': {e}"
+        )
+
+
 def main():
     st.set_page_config(
         page_title="Business KPI Anomaly Detection & RCA",
         layout="wide",
-        initial_sidebar_state="expanded",
+        initial_sidebar_state=session_state.sidebar_state
     )
+
+    # Sidebar width styling
+    st.markdown("""
+        <style>
+            section[data-testid="stSidebar"] {
+                min-width: 320px;
+                max-width: 320px;
+            }
+        </style>
+    """, unsafe_allow_html=True)
 
     st.sidebar.title("KPI Anomaly & RCA")
 
+
+    # 🔧 Sidebar Controls
+
+
+    st.sidebar.markdown("## ⚙️ System Controls")
+
+    # Generate Synthetic Data
+    if st.sidebar.button("Generate Fresh Synthetic Data"):
+        try:
+            generate_synthetic_kpi_data()
+
+            st.sidebar.success(
+                "Fresh synthetic KPI data generated successfully."
+            )
+
+            st.rerun()
+        except Exception as e:
+            st.sidebar.error(f"Data generation failed: {e}")
+
+
+    # Train / Refresh Model
+    st.sidebar.markdown("### 🔧 Model Maintenance")
+
+    if st.sidebar.button("Train / Refresh Anomaly Model"):
+        try:
+            train_isolation_forest()
+
+            st.sidebar.success(
+                "IsolationForest model trained & saved successfully."
+            )
+        except Exception as e:
+            st.sidebar.error(f"Model training failed: {e}")
+
+
+    # Required File Checks
     missing_files = []
+
     if not RAW_DATA_FILE.exists():
-        missing_files.append(str(RAW_DATA_FILE))
+        missing_files.append(RAW_DATA_FILE)
+
     if not AGG_DAILY_FILE.exists():
-        missing_files.append(str(AGG_DAILY_FILE))
-
-
-    if st.sidebar.button("🔁 Generate fresh synthetic data"):
-        generate_synthetic_kpi_data()
-
-        st.sidebar.success("Synthetic data regenerated. Please reload the page.")
-
-        missing_files = []
-        if not RAW_DATA_FILE.exists():
-            missing_files.append(str(RAW_DATA_FILE))
-
-        if not AGG_DAILY_FILE.exists():
-            missing_files.append(str(AGG_DAILY_FILE))
+        missing_files.append(AGG_DAILY_FILE)
 
 
     if missing_files:
         st.error("🚨 Required data files are missing:")
 
         for f in missing_files:
-            st.write("❌", f)
+            st.markdown(f"❌ `{Path(f).name}`")
 
-        st.warning("Please click **'Generate fresh synthetic data'** from the sidebar, then reload.")
-        st.stop()
-    
-    # 🔧 Train / Refresh Model Button
-    st.sidebar.markdown("### 🔧 Model Maintenance")
+        st.warning(
+            "Generate fresh synthetic KPI data using the sidebar to continue."
+        )
 
-    if st.sidebar.button("Train / Refresh Anomaly Model"):
-        try:
-            train_isolation_forest()
-            st.sidebar.success("IsolationForest model trained & saved successfully.")
-        except Exception as e:
-            st.sidebar.error(f"Model training failed: {e}")
-
+        return
 
 
     kpi = st.sidebar.selectbox("Select KPI", KPI_COLUMNS, index=0)
@@ -235,7 +292,7 @@ def main():
             "📈 KPI Overview",
             "🚨 Anomaly & Severity",
             "🧠 Root-Cause Analysis",
-            "📑 Reports Center",       
+            "📑 Reports Center",
             "🌳 ML-based RCA (Decision Tree)",
             "🔀 Change Points & Correlation",
             "📅 KPI Forecasting",
@@ -244,22 +301,28 @@ def main():
             "🤔 What-if Simulator",
             "🤖 Model Comparison (AutoML-style)",
             "🎞 Anomaly Replay",
-            "✅ Actions, Preview & PDF",    
+            "✅ Actions, Preview & PDF",
         ]
     )
 
     # Tab 1 - 📈 KPI Overview
     with tabs[0]:
         st.subheader(f"KPI Trend – {kpi.replace('_', ' ').title()}")
+
         fig = px.line(df_daily, x="date", y=kpi, title=f"{kpi} over time")
         st.plotly_chart(fig, use_container_width=True)
+
+        save_plotly_figure(
+            fig,
+            "kpi_overview.png"
+        )
 
         st.markdown("**Basic Stats**")
         st.write(df_daily[kpi].describe().to_frame().T)
 
         st.markdown("### 🔥 Top KPI Movers (Last Day vs Previous Day)")
         movers = _compute_kpi_movers(df_daily)
-        
+
         if movers.empty:
             st.info("Not enough data points yet to compute movers.")
         else:
@@ -269,6 +332,7 @@ def main():
     # Tab 2 - 🚨 Anomaly & Severity
     with tabs[1]:
         st.subheader("Hybrid Anomaly Scores & Severity Levels")
+
         fig2 = px.line(
             df_anom,
             x="date",
@@ -276,17 +340,28 @@ def main():
             color="severity",
             title="Hybrid Anomaly Score Over Time (by Severity)",
         )
+
         st.plotly_chart(fig2, use_container_width=True)
 
+        save_plotly_figure(
+            fig2,
+            "anomaly_severity.png"
+        )
+
         st.markdown("### Top Anomalous Days")
+
         top_n = st.slider("Show top N anomalies", 3, 30, 10)
+
         cols_to_show = ["date", "hybrid_anomaly_score", "severity", "is_hybrid_anomaly"] + KPI_COLUMNS
         cols_to_show = [c for c in cols_to_show if c in df_anom.columns]
+
         top_anom = (
             df_anom.sort_values("hybrid_anomaly_score", ascending=False)
             .head(top_n)[cols_to_show]
         )
+
         st.dataframe(top_anom)
+
 
     # Tab 3 - 🧠 Root-Cause Analysis
     with tabs[2]:
@@ -315,20 +390,29 @@ def main():
                     + " | "
                     + segment_df["cohort"]
                 )
+
                 fig3 = px.bar(
                     segment_df.head(10),
                     x="segment",
                     y="contribution_pct_of_change",
                     title=f"Top segment contributors to {kpi} change",
                 )
+
                 st.plotly_chart(fig3, use_container_width=True)
 
+                save_plotly_figure(
+                    fig3,
+                    "rca_segments.png"
+                )
+
             st.markdown("### Auto-generated Insight")
+
             insight_text = generate_insight_text(df_raw, df_anom, target_ts, kpi)
             st.code(insight_text, language="markdown")
 
-            st.session_state["last_insight_text"] = insight_text
-            st.session_state["last_anomaly_date"] = str(selected_date)
+            session_state["last_insight_text"] = insight_text
+            session_state["last_anomaly_date"] = str(selected_date)
+
 
     # Tab 4 - 📑 Reports Center
     with tabs[3]:
@@ -343,6 +427,7 @@ def main():
         if st.button("🧾 Generate All Reports"):
             try:
                 files = generate_reports.run_all_reports()
+
                 exec_pdf = files["executive_summary_pdf"]
                 bundle_zip = files["bundle_zip"]
 
@@ -351,11 +436,13 @@ def main():
                 # --- Show PDF preview of Executive Summary ---
                 pdf_bytes = exec_pdf.read_bytes()
                 b64 = base64.b64encode(pdf_bytes).decode("utf-8")
+
                 pdf_iframe = f"""
                 <iframe src="data:application/pdf;base64,{b64}"
                         width="100%" height="600"
                         type="application/pdf"></iframe>
                 """
+
                 st.markdown("### 👀 Executive Summary PDF Preview")
                 st.markdown(pdf_iframe, unsafe_allow_html=True)
 
@@ -382,11 +469,13 @@ def main():
                     "is configured if required."
                 )
 
+
     # Tab 5 - 🌳 ML-based RCA (Decision Tree)
     with tabs[4]:
         st.subheader("ML-based RCA – Decision Tree Explanation")
 
         clf, feature_cols = _train_decision_tree_rca(df_anom)
+
         if clf is None:
             st.info(
                 "Not enough anomaly examples yet to train a decision tree. "
@@ -394,7 +483,9 @@ def main():
             )
         else:
             st.markdown("### Feature Importance in Predicting Anomalies")
+
             importances = clf.feature_importances_
+
             fi_df = pd.DataFrame(
                 {"feature": feature_cols, "importance": importances}
             ).sort_values("importance", ascending=True)
@@ -406,13 +497,22 @@ def main():
                 orientation="h",
                 title="Which features drive anomalies?",
             )
+
             st.plotly_chart(fig_imp, use_container_width=True)
+
+            save_plotly_figure(
+                fig_imp,
+                "decision_tree_rca.png"
+            )
+
 
     # Tab 6 - 🔀 Change Points & Correlation
     with tabs[5]:
         st.subheader("🔀 Change Point Detection")
+
         cp_idx = _compute_change_points(df_daily[kpi])
         fig_cp = px.line(df_daily, x="date", y=kpi, title=f"{kpi} with detected change points")
+
         if cp_idx:
             cp_dates = df_daily.loc[cp_idx, "date"]
             fig_cp.add_scatter(
@@ -422,27 +522,52 @@ def main():
                 marker=dict(size=10),
                 name="Change Point",
             )
+
         st.plotly_chart(fig_cp, use_container_width=True)
 
+        save_plotly_figure(
+            fig_cp,
+            "change_points.png"
+        )
+
         st.subheader("📊 KPI Correlation Matrix")
+
         corr = df_daily[KPI_COLUMNS].corr()
         fig_corr = px.imshow(corr, text_auto=True, aspect="auto", title="KPI Correlation Heatmap")
+
         st.plotly_chart(fig_corr, use_container_width=True)
+
+        save_plotly_figure(
+            fig_corr,
+            "correlation_heatmap.png"
+        )
+
 
     # Tab 7 - 📅 KPI Forecasting
     with tabs[6]:
         st.subheader("📅 KPI Forecasting")
+
         periods = st.slider("Forecast horizon (days)", 7, 60, 30, step=1)
         forecast = _forecast_kpi(df_daily, kpi, periods=periods)
+
         fig_f = px.line(forecast, x="ds", y="yhat", title=f"{kpi} forecast")
         fig_f.add_scatter(x=df_daily["date"], y=df_daily[kpi], mode="lines", name="Actual")
+
         st.plotly_chart(fig_f, use_container_width=True)
+
+        save_plotly_figure(
+            fig_f,
+            "forecasting.png"
+        )
+
 
     # Tab 8 - 👥 Cohort Trends
     with tabs[7]:
         st.subheader("👥 Cohort / Segment Trends")
+
         dim = st.selectbox("Segment by", ["cohort", "channel", "region"], index=0)
         cohort_df = _build_cohort_trends(df_raw, kpi, dim)
+
         fig_cohort = px.line(
             cohort_df,
             x="date",
@@ -450,17 +575,26 @@ def main():
             color="segment",
             title=f"{kpi} by {dim} over time",
         )
+
         st.plotly_chart(fig_cohort, use_container_width=True)
+
+        save_plotly_figure(
+            fig_cohort,
+            "cohort_trends.png"
+        )
+
 
     # Tab 9 - 🆚 Date Comparison
     with tabs[8]:
         st.subheader("🆚 Compare Two Dates")
 
         all_dates = df_daily["date"].dt.date.unique()
+
         if len(all_dates) < 2:
             st.info("Need at least two days of data for comparison.")
         else:
             col_a, col_b = st.columns(2)
+
             with col_a:
                 date_a = st.selectbox("Date A", all_dates, index=0)
             with col_b:
@@ -484,6 +618,7 @@ def main():
             comp_df = pd.DataFrame(comp_rows)
             st.dataframe(comp_df)
 
+
     # Tab 10 - 🤔 What-if Simulator
     with tabs[9]:
         st.subheader("🤔 What-if KPI Simulator")
@@ -505,19 +640,26 @@ def main():
             st.info("Required base KPIs are missing for simulation.")
         else:
             new_dau = base_dau * (1 + dau_adj / 100) if base_dau else base_dau
+
             base_cr = base_orders / base_sessions if base_sessions else 0
             new_cr = base_cr * (1 + conv_adj / 100)
+
             new_orders = base_sessions * new_cr
+
             new_pay_succ = base_pay_succ * (1 + pay_adj / 100)
             new_succ_orders = new_orders * new_pay_succ
+
             avg_order_val = base_rev / (base_orders * base_pay_succ) if base_orders and base_pay_succ else 0
             new_rev = new_succ_orders * avg_order_val
 
             st.markdown("### Simulation Results")
+
             st.write(f"Base revenue: {base_rev:,.0f}")
             st.write(f"Simulated revenue: {new_rev:,.0f}")
+
             if base_rev:
                 st.write(f"Change: {(new_rev - base_rev):,.0f} ({(new_rev - base_rev) / base_rev * 100:.1f}%)")
+
 
     # Tab 11 - 🤖 Model Comparison (AutoML-style)
     with tabs[10]:
@@ -532,22 +674,35 @@ def main():
             else:
                 st.markdown("F1 scores vs injected anomaly labels:")
                 st.dataframe(scores_df)
+
                 best = scores_df.iloc[0]
+
                 st.success(f"Best-performing detector for {kpi}: **{best['model']}** (F1={best['f1']:.3f})")
+
 
     # Tab 12 - 🎞 Anomaly Replay
     with tabs[11]:
         st.subheader("🎞 Anomaly Replay")
         st.markdown("Use the slider to step through each day and inspect anomaly status.")
+
         idx = st.slider("Day index", 0, len(df_anom) - 1, len(df_anom) - 1)
         row = df_anom.iloc[idx]
+
         st.write("**Date:**", row["date"].date())
         st.write("**Hybrid score:**", f"{row['hybrid_anomaly_score']:.3f}")
         st.write("**Severity:**", str(row.get("severity", "N/A")))
         st.write("**Is anomaly:**", bool(row["is_hybrid_anomaly"]))
+
         fig_r = px.line(df_anom, x="date", y="hybrid_anomaly_score")
         fig_r.add_scatter(x=[row["date"]], y=[row["hybrid_anomaly_score"]], mode="markers", name="Selected")
+
         st.plotly_chart(fig_r, use_container_width=True)
+
+        save_plotly_figure(
+            fig_r,
+            "anomaly_replay.png"
+        )
+
 
     # Tab 13 - ✅ Actions, Preview & PDF
     with tabs[12]:
@@ -558,21 +713,51 @@ def main():
             df_anom["date"].dt.date.unique(),
             index=len(df_anom) - 1,
         )
+
         st.markdown(
-            f"Focusing on **{kpi.replace('_', ' ').title()}** around **{selected_date}**."
+            f"Focusing on "
+            f"**{kpi.replace('_', ' ').title()}** "
+            f"around **{selected_date}**."
         )
 
-        actions = suggest_actions(kpi)
-        insight_text = st.session_state.get(
-            "last_insight_text",
-            "Run RCA tab to generate insight text."
+        # Suggested Actions
+        actions = str(suggest_actions(kpi))
+
+        insight_text = str(
+            session_state.get(
+                "last_insight_text",
+                "Run RCA tab to generate insight text."
+            )
         )
 
+        st.markdown("## 💡 Recommended Actions")
+
+        st.code(actions, language="text")
+
+        # Generate PDF Report
         if st.button("📄 Generate PDF Report"):
-            pdf_bytes = _build_pdf_report(insight_text, actions)
 
-            st.markdown("### 👀 Report Preview")
-            preview_md = f'''
+            try:
+                pdf_bytes = _build_pdf_report(
+                    insight_text,
+                    actions
+                )
+
+                # Save PDF to reports folder
+                report_path = (
+                        REPORTS_DIR / "kpi_anomaly_rca_report.pdf"
+                )
+
+                with open(report_path, "wb") as f:
+                    f.write(pdf_bytes)
+
+                st.success(
+                    f"Report saved successfully: "
+                    f"{report_path.name}"
+                )
+
+                # Markdown Preview Variable
+                preview_md = f'''
 **Insight Summary**
 
 ```text
@@ -585,18 +770,51 @@ def main():
 {actions}
 ```
 '''
-            st.markdown(preview_md)
+                # Markdown Preview
+                st.markdown(preview_md)
 
-            st.download_button(
-                label="Download KPI Anomaly & RCA PDF",
-                data=pdf_bytes,
-                file_name="kpi_anomaly_rca_report.pdf",
-                mime="application/pdf",
+                # Encode generated PDF bytes for inline preview
+                b64_pdf = base64.b64encode(
+                    pdf_bytes
+                ).decode("utf-8")
+
+                pdf_display = f"""
+                <iframe
+                    src="data:application/pdf;base64,{b64_pdf}"
+                    width="100%"
+                    height="700"
+                    type="application/pdf">
+                </iframe>
+                """
+
+                # Inline PDF Preview
+                st.markdown("### 👀 PDF Preview")
+
+
+                st.markdown(
+                    pdf_display,
+                    unsafe_allow_html=True
+                )
+
+
+                st.download_button(
+                    label="⬇ Download KPI Anomaly & RCA PDF",
+                    data=pdf_bytes,
+                    file_name="kpi_anomaly_rca_report.pdf",
+                    mime="application/pdf",
+                )
+            except Exception as e:
+
+                st.error(
+                    f"Report generation failed: {e}"
             )
 
+        # Business Analyst Context
         st.info(
-            "As a Business Analyst, you would share this report with Product, "
-            "Engineering, and Marketing teams, and track the KPI response after actions."
+            "As a Business Analyst, this report can be shared with "
+            "Product, Engineering, Growth, and Leadership teams "
+            "to track KPI anomalies, diagnose root causes, "
+            "and monitor post-action KPI recovery."
         )
 
 if __name__ == "__main__":

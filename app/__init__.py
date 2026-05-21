@@ -1,1 +1,1 @@
-# KPI Anomaly & RCA V3.2 package
+# KPI Anomaly & RCA package
