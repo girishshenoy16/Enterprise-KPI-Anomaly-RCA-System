@@ -349,10 +349,6 @@ pip install -r requirements.txt
 
 ---
 
-Add this section to your `README.md` under **Installation** or before **Run Application**.
-
----
-
 # 🧾 PDF Report Generation Setup (wkhtmltopdf Required)
 
 This project uses **pdfkit + wkhtmltopdf** to generate executive-ready PDF reports from Markdown files.
