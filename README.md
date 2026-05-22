@@ -361,7 +361,7 @@ This project uses **pdfkit + wkhtmltopdf** to generate executive-ready PDF repor
 
 Download from the official website:
 
-[wkhtmltopdf Official Download Page](https://wkhtmltopdf.org/downloads.html?utm_source=chatgpt.com)
+[wkhtmltopdf Official Download Page](https://wkhtmltopdf.org/downloads.html)
 
 Install it normally on your system.
 
